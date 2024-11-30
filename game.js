@@ -137,8 +137,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return minePositions;
     }
 
-    function handleCellClick(cell, minePositions) {
-    if (gameOver) return; // Игра завершена, пропускаем дальнейшую обработку
+    async function handleCellClick(cell, minePositions) {
+    if (gameOver || gameSaved) return; // Игра завершена или уже сохранена, пропускаем обработку
 
     const index = parseInt(cell.dataset.index);
     const row = Math.floor(index / width);
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
         moves.push({ row, col, result: 'Mine' }); // Запись шага
         gameOver = true;
         gameStatus.textContent = 'Game Over!';
-        saveGameResult(false); // Сохраняем игру при поражении
+        await saveGameResult(false); // Сохраняем игру при поражении
         return;
     }
 
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (checkForWin(minePositions)) {
         gameStatus.textContent = 'You Win!';
         gameOver = true;
-        saveGameResult(true); // Сохраняем игру при победе
+        await saveGameResult(true); // Сохраняем игру при победе
     }
 }
 
