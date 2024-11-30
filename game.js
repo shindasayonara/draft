@@ -138,31 +138,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function handleCellClick(cell, minePositions) {
-    if (gameOver) return; // Игра завершена, пропускаем дальнейшую обработку
+        const index = parseInt(cell.dataset.index);
+        const row = Math.floor(index / width);
+        const col = index % width;
 
-    const index = parseInt(cell.dataset.index);
-    const row = Math.floor(index / width);
-    const col = index % width;
+        if (minePositions.has(index)) {
+            cell.classList.add('revealed', 'mine');
+            moves.push({ row, col, result: 'Mine' }); // Запись шага
+            gameOver = true;
+            gameStatus.textContent = 'Game Over!';
+            saveGameResult(false);
+            return;
+        }
 
-    if (minePositions.has(index)) {
-        cell.classList.add('revealed', 'mine');
-        moves.push({ row, col, result: 'Mine' }); // Запись шага
-        gameOver = true;
-        gameStatus.textContent = 'Game Over!';
-        saveGameResult(false); // Сохраняем игру при поражении
-        return;
+        moves.push({ row, col, result: 'Safe' }); // Запись шага
+        revealCell(cell, minePositions);
     }
-
-    moves.push({ row, col, result: 'Safe' }); // Запись шага
-    revealCell(cell, minePositions);
-
-    if (checkForWin(minePositions)) {
-        gameStatus.textContent = 'You Win!';
-        gameOver = true;
-        saveGameResult(true); // Сохраняем игру при победе
-    }
-}
-
 
     function revealCell(cell, minePositions) {
         if (cell.classList.contains('revealed')) return;
